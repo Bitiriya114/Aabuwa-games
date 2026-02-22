@@ -1,82 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Aabuwa Games</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#111827;
+  color:white;
+  text-align:center;
+}
+.header{
+  background:#16a34a;
+  padding:15px;
+  font-size:22px;
+  font-weight:bold;
+}
+.balance-box{
+  background:#1f2937;
+  margin:15px;
+  padding:15px;
+  border-radius:10px;
+}
+.timer{
+  font-size:28px;
+  color:#facc15;
+}
+.numbers{
+  display:grid;
+  grid-template-columns: repeat(5,1fr);
+  gap:8px;
+  margin:15px;
+}
+.num-btn{
+  padding:15px;
+  font-size:20px;
+  font-weight:bold;
+  border:none;
+  border-radius:8px;
+  background:#374151;
+  color:white;
+}
+.colors{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:10px;
+}
+.color-btn{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  color:white;
+}
+.green{background:#16a34a;}
+.red{background:#dc2626;}
+.violet{background:#7c3aed;}
+.result-box{
+  background:#1f2937;
+  margin:15px;
+  padding:10px;
+  border-radius:8px;
+}
+.history{
+  margin:15px;
+  font-size:14px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">Aabuwa Games</div>
+
+<div class="balance-box">
+Balance ₹<span id="balance">1000</span>
+</div>
+
+<div class="timer">
+⏳ <span id="time">30</span>s
+</div>
+
+<!-- NUMBER SECTION -->
+<div class="numbers">
+<button class="num-btn" onclick="betNumber(0)">0</button>
+<button class="num-btn" onclick="betNumber(1)">1</button>
+<button class="num-btn" onclick="betNumber(2)">2</button>
+<button class="num-btn" onclick="betNumber(3)">3</button>
+<button class="num-btn" onclick="betNumber(4)">4</button>
+<button class="num-btn" onclick="betNumber(5)">5</button>
+<button class="num-btn" onclick="betNumber(6)">6</button>
+<button class="num-btn" onclick="betNumber(7)">7</button>
+<button class="num-btn" onclick="betNumber(8)">8</button>
+<button class="num-btn" onclick="betNumber(9)">9</button>
+</div>
+
+<div>
+Bet ₹ <input type="number" id="betAmount" value="100">
+</div>
+
+<div class="colors">
+<button class="color-btn green" onclick="betColor('Green')">Green</button>
+<button class="color-btn violet" onclick="betColor('Violet')">Violet</button>
+<button class="color-btn red" onclick="betColor('Red')">Red</button>
+</div>
+
+<div class="result-box">
+Result: <span id="result">Waiting...</span>
+</div>
+
+<div class="history">
+<h3>History</h3>
+<div id="historyList"></div>
+</div>
+
 <script>
 let balance = 1000;
-let betColor = "";
-let defaultTime = 30;
-let time = defaultTime;
-let history = [];
-let period = 10001;
+let timeLeft = 30;
+let selectedNumber = null;
+let selectedColor = "";
+let historyData = [];
 
-function setMode(seconds,btn){
-  defaultTime = seconds;
-  time = seconds;
-  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
+function betNumber(num){
+  selectedNumber = num;
+  selectedColor = "";
+  alert("Number Bet: " + num + " (9X)");
 }
 
-function bet(color){
-  let amount = parseInt(document.getElementById("betAmount").value);
-  if(amount > balance){
-    alert("Insufficient Balance");
-    return;
-  }
-  betColor = color;
-  alert("Bet placed on " + color);
+function betColor(color){
+  selectedColor = color;
+  selectedNumber = null;
+  alert("Color Bet: " + color);
 }
 
-function getColorByNumber(num){
+function getColor(num){
   if(num == 0 || num == 5) return "Violet";
   if(num % 2 == 0) return "Red";
   return "Green";
 }
 
-setInterval(()=>{
-  time--;
-  document.getElementById("time").innerText = time;
+setInterval(function(){
 
-  if(time <= 0){
+  timeLeft--;
+  document.getElementById("time").innerText = timeLeft;
 
-    let randomNumber = Math.floor(Math.random()*10);
-    let resultColor = getColorByNumber(randomNumber);
+  if(timeLeft <= 0){
 
-    document.getElementById("result").innerText = 
-      resultColor + " (" + randomNumber + ")";
+    let number = Math.floor(Math.random()*10);
+    let resultColor = getColor(number);
 
-    let amount = parseInt(document.getElementById("betAmount").value);
+    document.getElementById("result").innerText =
+      number + " (" + resultColor + ")";
 
-    if(betColor == resultColor){
-      balance += amount;
-    } 
-    else if(betColor != ""){
-      balance -= amount;
+    let betAmount = parseInt(document.getElementById("betAmount").value);
+
+    if(selectedNumber !== null){
+      if(selectedNumber == number){
+        balance += betAmount * 9;
+      } else {
+        balance -= betAmount;
+      }
+    }
+    else if(selectedColor != ""){
+      if(selectedColor == resultColor){
+        balance += betAmount * 2;
+      } else {
+        balance -= betAmount;
+      }
     }
 
     document.getElementById("balance").innerText = balance;
 
-    history.unshift({
-      period: period,
-      number: randomNumber,
-      color: resultColor
-    });
-
-    if(history.length > 10){
-      history.pop();
+    historyData.unshift(number + " | " + resultColor);
+    if(historyData.length > 10){
+      historyData.pop();
     }
 
     document.getElementById("historyList").innerHTML =
-      history.map(h => 
-        `<div style="margin:5px;padding:5px;background:#1f2937;border-radius:5px;">
-          ${h.period} | 
-          <b>${h.number}</b> | 
-          <span style="color:${h.color=='Green'?'#16a34a':h.color=='Red'?'#dc2626':'#7c3aed'}">
-          ${h.color}
-          </span>
-        </div>`
-      ).join("");
+      historyData.join("<br>");
 
-    betColor = "";
-    time = defaultTime;
-    period++;
+    selectedNumber = null;
+    selectedColor = "";
+    timeLeft = 30;
   }
 
 },1000);
 </script>
+
+</body>
+</html>
