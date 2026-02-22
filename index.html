@@ -1,216 +1,203 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Aabuwa Games</title>
+<title>Aabuwa Wingo Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:#111827;
+  font-family:Arial, sans-serif;
+  background:#141728;
   color:white;
   text-align:center;
 }
 .header{
-  background:#16a34a;
+  background:#0e3b91;
   padding:15px;
-  font-size:22px;
+  font-size:24px;
   font-weight:bold;
 }
-.balance-box{
-  background:#1f2937;
+.balance{
   margin:15px;
-  padding:15px;
-  border-radius:10px;
+  font-size:20px;
+  background:#1f2937;
+  padding:12px;
+  border-radius:8px;
 }
 .timer{
-  font-size:28px;
+  font-size:30px;
   color:#facc15;
+  margin:10px;
 }
 .numbers{
   display:grid;
   grid-template-columns: repeat(5,1fr);
   gap:8px;
-  margin:15px;
+  margin:12px;
 }
-.num-btn{
-  padding:15px;
-  font-size:20px;
+.numbers button{
+  padding:15px 0;
+  font-size:18px;
   font-weight:bold;
   border:none;
-  border-radius:8px;
-  background:#374151;
+  border-radius:6px;
+  background:#2a2f3a;
   color:white;
 }
-.section{
+.bet-input{
+  margin:12px;
+}
+.bet-input input{
+  padding:10px;
+  width:100px;
+  font-size:16px;
+  border-radius:6px;
+  border:none;
+}
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
   margin:10px;
 }
-.btn{
-  padding:12px;
-  margin:5px;
+.actions button{
+  padding:12px 18px;
+  font-size:16px;
   border:none;
-  border-radius:8px;
+  border-radius:6px;
   font-weight:bold;
   color:white;
 }
 .green{background:#16a34a;}
 .red{background:#dc2626;}
 .violet{background:#7c3aed;}
-.blue{background:#2563eb;}
-.orange{background:#ea580c;}
+.big{background:#2563eb;}
+.small{background:#ea580c;}
 .result-box{
+  margin:12px;
+  font-size:22px;
   background:#1f2937;
-  margin:15px;
-  padding:10px;
+  padding:12px;
   border-radius:8px;
 }
 .history{
   margin:15px;
   font-size:14px;
+  text-align:left;
+  padding:0 16px;
 }
 </style>
 </head>
+
 <body>
 
-<div class="header">Aabuwa Games</div>
+<div class="header">Aabuwa Wingo Game</div>
 
-<div class="balance-box">
-Balance ₹<span id="balance">1000</span>
-</div>
+<div class="balance">Balance ₹<span id="balance">1000</span></div>
 
-<div class="timer">
-⏳ <span id="time">30</span>s
-</div>
+<div class="timer">⏳ <span id="time">30</span>s</div>
 
-<!-- NUMBER BET -->
+<!-- NUMBER BUTTONS -->
 <div class="numbers">
-<button class="num-btn" onclick="betNumber(0)">0</button>
-<button class="num-btn" onclick="betNumber(1)">1</button>
-<button class="num-btn" onclick="betNumber(2)">2</button>
-<button class="num-btn" onclick="betNumber(3)">3</button>
-<button class="num-btn" onclick="betNumber(4)">4</button>
-<button class="num-btn" onclick="betNumber(5)">5</button>
-<button class="num-btn" onclick="betNumber(6)">6</button>
-<button class="num-btn" onclick="betNumber(7)">7</button>
-<button class="num-btn" onclick="betNumber(8)">8</button>
-<button class="num-btn" onclick="betNumber(9)">9</button>
+  <button onclick="betNumber(0)">0</button>
+  <button onclick="betNumber(1)">1</button>
+  <button onclick="betNumber(2)">2</button>
+  <button onclick="betNumber(3)">3</button>
+  <button onclick="betNumber(4)">4</button>
+  <button onclick="betNumber(5)">5</button>
+  <button onclick="betNumber(6)">6</button>
+  <button onclick="betNumber(7)">7</button>
+  <button onclick="betNumber(8)">8</button>
+  <button onclick="betNumber(9)">9</button>
 </div>
 
-<div>
-Bet ₹ <input type="number" id="betAmount" value="100">
+<div class="bet-input">
+  Bet ₹ <input type="number" id="betAmount" value="100" min="10">
 </div>
 
-<!-- COLOR BET -->
-<div class="section">
-<button class="btn green" onclick="betColor('Green')">Green (2X)</button>
-<button class="btn violet" onclick="betColor('Violet')">Violet (2X)</button>
-<button class="btn red" onclick="betColor('Red')">Red (2X)</button>
+<!-- COLOR + BIG/SMALL -->
+<div class="actions">
+  <button class="green" onclick="betColor('Green')">Green (2X)</button>
+  <button class="violet" onclick="betColor('Violet')">Violet (4X)</button>
+  <button class="red" onclick="betColor('Red')">Red (2X)</button>
+  <button class="big" onclick="betBigSmall('Big')">Big (2X)</button>
+  <button class="small" onclick="betBigSmall('Small')">Small (2X)</button>
 </div>
 
-<!-- BIG SMALL -->
-<div class="section">
-<button class="btn blue" onclick="betBigSmall('Big')">Big (2X)</button>
-<button class="btn orange" onclick="betBigSmall('Small')">Small (2X)</button>
-</div>
+<div class="result-box">Result: <span id="result">Waiting...</span></div>
 
-<div class="result-box">
-Result: <span id="result">Waiting...</span>
-</div>
-
-<div class="history">
-<h3>History</h3>
-<div id="historyList"></div>
-</div>
+<div class="history"><h3>History</h3><div id="historyList"></div></div>
 
 <script>
 let balance = 1000;
 let timeLeft = 30;
-
-let selectedNumber = null;
-let selectedColor = "";
-let selectedBigSmall = "";
-
+let betType = "";
+let betValue = null;
 let historyData = [];
 
-function betNumber(num){
-  selectedNumber = num;
-  selectedColor = "";
-  selectedBigSmall = "";
-  alert("Number Bet: " + num + " (9X)");
+function betNumber(n){
+  betType = "number";
+  betValue = n;
+  alert("Number chosen: " + n + " (9X win)");
 }
 
-function betColor(color){
-  selectedColor = color;
-  selectedNumber = null;
-  selectedBigSmall = "";
-  alert("Color Bet: " + color + " (2X)");
+function betColor(c){
+  betType = "color";
+  betValue = c;
+  alert("Color chosen: " + c);
 }
 
-function betBigSmall(type){
-  selectedBigSmall = type;
-  selectedNumber = null;
-  selectedColor = "";
-  alert(type + " Bet (2X)");
+function betBigSmall(bs){
+  betType = "bigsmall";
+  betValue = bs;
+  alert("Chosen: " + bs);
 }
 
-function getColor(num){
+function getResultColor(num){
   if(num == 0 || num == 5) return "Violet";
   if(num % 2 == 0) return "Red";
   return "Green";
 }
 
-setInterval(function(){
+function getBigSmall(num){
+  return num >= 5 ? "Big" : "Small";
+}
 
+setInterval(function(){
   timeLeft--;
   document.getElementById("time").innerText = timeLeft;
 
   if(timeLeft <= 0){
 
-    let number = Math.floor(Math.random()*10);
-    let resultColor = getColor(number);
-    let resultBigSmall = number >=5 ? "Big" : "Small";
+    let rnd = Math.floor(Math.random()*10);
+    let color = getResultColor(rnd);
+    let bs = getBigSmall(rnd);
+    let amt = parseInt(document.getElementById("betAmount").value);
 
-    document.getElementById("result").innerText =
-      number + " (" + resultColor + ", " + resultBigSmall + ")";
-
-    let betAmount = parseInt(document.getElementById("betAmount").value);
-
-    if(selectedNumber !== null){
-      if(selectedNumber == number){
-        balance += betAmount * 9;
-      } else {
-        balance -= betAmount;
-      }
+    let win = 0;
+    if(betType == "number" && betValue === rnd) win = amt * 9;
+    else if(betType == "color" && betValue == color){
+      win = amt * (betValue == "Violet" ? 4 : 2);
     }
-    else if(selectedColor != ""){
-      if(selectedColor == resultColor){
-        balance += betAmount * 2;
-      } else {
-        balance -= betAmount;
-      }
-    }
-    else if(selectedBigSmall != ""){
-      if(selectedBigSmall == resultBigSmall){
-        balance += betAmount * 2;
-      } else {
-        balance -= betAmount;
-      }
-    }
+    else if(betType == "bigsmall" && betValue == bs) win = amt * 2;
+    else win = -amt;
 
+    balance += win;
     document.getElementById("balance").innerText = balance;
 
-    historyData.unshift(number + " | " + resultColor + " | " + resultBigSmall);
-    if(historyData.length > 10){
-      historyData.pop();
-    }
+    document.getElementById("result").innerText =
+      rnd + " (" + color + ", " + bs + ") → " + (win>0 ? "+"+win : win);
+
+    historyData.unshift(
+      rnd + " | " + color + " | " + bs + " | " + (win>0?"+"+win:"+win)
+    );
+    if(historyData.length > 10) historyData.pop();
 
     document.getElementById("historyList").innerHTML =
       historyData.join("<br>");
 
-    selectedNumber = null;
-    selectedColor = "";
-    selectedBigSmall = "";
-
+    betType = ""; betValue = null;
     timeLeft = 30;
   }
 
