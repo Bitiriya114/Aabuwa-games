@@ -9,31 +9,37 @@ body{
   background:#0f172a;
   color:white;
 }
-h1{
-  color:#00ff88;
+h1{ color:#00ff88; }
+
+.balance{ font-size:20px; margin:10px; }
+
+.timer{ font-size:28px; margin:15px; }
+
+input{
+  padding:8px;
+  font-size:16px;
+  width:100px;
+  text-align:center;
 }
-.balance{
-  font-size:20px;
-  margin:10px;
-}
-.timer{
-  font-size:30px;
-  margin:20px;
-}
+
 button{
   padding:10px 20px;
-  margin:10px;
-  font-size:18px;
+  margin:8px;
+  font-size:16px;
   border:none;
   border-radius:5px;
   cursor:pointer;
 }
+
 .green{background:green;color:white;}
 .red{background:red;color:white;}
 .violet{background:purple;color:white;}
-.result{
-  font-size:25px;
+
+.result{ font-size:22px; margin-top:15px; }
+
+.history{
   margin-top:20px;
+  font-size:14px;
 }
 </style>
 </head>
@@ -46,6 +52,11 @@ button{
 Balance: ₹<span id="balance">1000</span>
 </div>
 
+<div>
+Bet Amount: ₹
+<input type="number" id="betAmount" value="100" min="10">
+</div>
+
 <div class="timer">
 Time: <span id="time">30</span>
 </div>
@@ -56,14 +67,27 @@ Time: <span id="time">30</span>
 
 <div class="result" id="result"></div>
 
+<div class="history">
+<h3>Result History</h3>
+<div id="historyList"></div>
+</div>
+
 <script>
 let balance = 1000;
 let betColor = "";
 let time = 30;
+let history = [];
 
 function bet(color){
+  let amount = parseInt(document.getElementById("betAmount").value);
+
+  if(amount > balance){
+    alert("Insufficient Balance");
+    return;
+  }
+
   betColor = color;
-  alert("Bet placed on " + color);
+  alert("Bet placed on " + color + " ₹" + amount);
 }
 
 setInterval(()=>{
@@ -71,19 +95,31 @@ setInterval(()=>{
   document.getElementById("time").innerText = time;
 
   if(time == 0){
+
     let colors = ["Green","Red","Violet"];
     let result = colors[Math.floor(Math.random()*3)];
     document.getElementById("result").innerText = "Result: " + result;
 
+    let amount = parseInt(document.getElementById("betAmount").value);
+
     if(betColor == result){
-      balance += 100;
-      alert("You Win ₹100");
-    } else if(betColor != ""){
-      balance -= 100;
-      alert("You Lose ₹100");
+      balance += amount;
+      alert("You Win ₹" + amount);
+    } 
+    else if(betColor != ""){
+      balance -= amount;
+      alert("You Lose ₹" + amount);
     }
 
     document.getElementById("balance").innerText = balance;
+
+    history.unshift(result);
+    if(history.length > 10){
+      history.pop();
+    }
+
+    document.getElementById("historyList").innerText = history.join(" | ");
+
     betColor = "";
     time = 30;
   }
