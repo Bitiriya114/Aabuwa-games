@@ -1,159 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Aabuwa Games - Colour Trading</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#111827;
-  color:white;
-  text-align:center;
-}
-
-.header{
-  background:#16a34a;
-  padding:15px;
-  font-size:22px;
-  font-weight:bold;
-}
-
-.balance-box{
-  background:#1f2937;
-  margin:15px;
-  padding:15px;
-  border-radius:10px;
-  font-size:18px;
-}
-
-.timer{
-  font-size:30px;
-  margin:10px;
-  color:#facc15;
-}
-
-.timer-modes{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  margin:10px;
-}
-
-.mode-btn{
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
-  font-size:14px;
-  cursor:pointer;
-  background:#374151;
-  color:white;
-}
-
-.active{
-  background:#16a34a;
-}
-
-.bet-section{
-  margin:15px;
-}
-
-input{
-  padding:8px;
-  width:100px;
-  text-align:center;
-  border-radius:5px;
-  border:none;
-}
-
-.colors{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:15px;
-}
-
-.color-btn{
-  flex:1;
-  padding:15px;
-  font-size:16px;
-  border:none;
-  border-radius:8px;
-  color:white;
-  font-weight:bold;
-}
-
-.green{background:#16a34a;}
-.red{background:#dc2626;}
-.violet{background:#7c3aed;}
-
-.result-box{
-  background:#1f2937;
-  margin:15px;
-  padding:10px;
-  border-radius:8px;
-  font-size:20px;
-}
-
-.history{
-  margin:15px;
-}
-
-.history span{
-  display:inline-block;
-  padding:5px 8px;
-  margin:3px;
-  border-radius:5px;
-  font-size:12px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">Aabuwa Games</div>
-
-<div class="balance-box">
-Balance: ₹<span id="balance">1000</span>
-</div>
-
-<div class="timer-modes">
-<button class="mode-btn active" onclick="setMode(30,this)">30s</button>
-<button class="mode-btn" onclick="setMode(60,this)">1m</button>
-<button class="mode-btn" onclick="setMode(180,this)">3m</button>
-<button class="mode-btn" onclick="setMode(300,this)">5m</button>
-</div>
-
-<div class="timer">
-⏳ <span id="time">30</span>s
-</div>
-
-<div class="bet-section">
-Bet Amount ₹ 
-<input type="number" id="betAmount" value="100" min="10">
-</div>
-
-<div class="colors">
-<button class="color-btn green" onclick="bet('Green')">GREEN</button>
-<button class="color-btn violet" onclick="bet('Violet')">VIOLET</button>
-<button class="color-btn red" onclick="bet('Red')">RED</button>
-</div>
-
-<div class="result-box">
-Result: <span id="result">Waiting...</span>
-</div>
-
-<div class="history">
-<h3>Last Results</h3>
-<div id="historyList"></div>
-</div>
-
 <script>
 let balance = 1000;
 let betColor = "";
 let defaultTime = 30;
 let time = defaultTime;
 let history = [];
+let period = 10001;
 
 function setMode(seconds,btn){
   defaultTime = seconds;
@@ -172,20 +23,27 @@ function bet(color){
   alert("Bet placed on " + color);
 }
 
+function getColorByNumber(num){
+  if(num == 0 || num == 5) return "Violet";
+  if(num % 2 == 0) return "Red";
+  return "Green";
+}
+
 setInterval(()=>{
   time--;
   document.getElementById("time").innerText = time;
 
   if(time <= 0){
 
-    let colors = ["Green","Red","Violet"];
-    let result = colors[Math.floor(Math.random()*3)];
+    let randomNumber = Math.floor(Math.random()*10);
+    let resultColor = getColorByNumber(randomNumber);
 
-    document.getElementById("result").innerText = result;
+    document.getElementById("result").innerText = 
+      resultColor + " (" + randomNumber + ")";
 
     let amount = parseInt(document.getElementById("betAmount").value);
 
-    if(betColor == result){
+    if(betColor == resultColor){
       balance += amount;
     } 
     else if(betColor != ""){
@@ -194,20 +52,31 @@ setInterval(()=>{
 
     document.getElementById("balance").innerText = balance;
 
-    history.unshift(result);
+    history.unshift({
+      period: period,
+      number: randomNumber,
+      color: resultColor
+    });
+
     if(history.length > 10){
       history.pop();
     }
 
     document.getElementById("historyList").innerHTML =
-      history.map(r => `<span style="background:${r=='Green'?'#16a34a':r=='Red'?'#dc2626':'#7c3aed'}">${r}</span>`).join("");
+      history.map(h => 
+        `<div style="margin:5px;padding:5px;background:#1f2937;border-radius:5px;">
+          ${h.period} | 
+          <b>${h.number}</b> | 
+          <span style="color:${h.color=='Green'?'#16a34a':h.color=='Red'?'#dc2626':'#7c3aed'}">
+          ${h.color}
+          </span>
+        </div>`
+      ).join("");
 
     betColor = "";
     time = defaultTime;
+    period++;
   }
 
 },1000);
 </script>
-
-</body>
-</html>
