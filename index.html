@@ -1,208 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Aabuwa Wingo Game</title>
+<title>Royal Gaming Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:#141728;
+  background:#0f172a;
   color:white;
-  text-align:center;
 }
+
 .header{
-  background:#0e3b91;
+  background:#111827;
   padding:15px;
-  font-size:24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:22px;
   font-weight:bold;
+  color:#22c55e;
 }
+
 .balance{
-  margin:15px;
-  font-size:20px;
   background:#1f2937;
-  padding:12px;
-  border-radius:8px;
+  padding:8px 15px;
+  border-radius:6px;
 }
-.timer{
-  font-size:30px;
-  color:#facc15;
-  margin:10px;
-}
-.numbers{
-  display:grid;
-  grid-template-columns: repeat(5,1fr);
-  gap:8px;
-  margin:12px;
-}
-.numbers button{
-  padding:15px 0;
+
+.section-title{
+  padding:15px;
   font-size:18px;
   font-weight:bold;
-  border:none;
-  border-radius:6px;
-  background:#2a2f3a;
-  color:white;
 }
-.bet-input{
-  margin:12px;
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+  padding:0 15px 20px 15px;
 }
-.bet-input input{
-  padding:10px;
-  width:100px;
-  font-size:16px;
-  border-radius:6px;
-  border:none;
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  text-align:center;
+  transition:0.3s;
+  cursor:pointer;
 }
-.actions{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin:10px;
+
+.card:hover{
+  background:#334155;
+  transform:scale(1.05);
 }
-.actions button{
-  padding:12px 18px;
-  font-size:16px;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-  color:white;
+
+.card h4{
+  margin:10px 0;
+  font-size:15px;
 }
-.green{background:#16a34a;}
-.red{background:#dc2626;}
-.violet{background:#7c3aed;}
-.big{background:#2563eb;}
-.small{background:#ea580c;}
-.result-box{
-  margin:12px;
-  font-size:22px;
-  background:#1f2937;
-  padding:12px;
-  border-radius:8px;
-}
-.history{
-  margin:15px;
-  font-size:14px;
-  text-align:left;
-  padding:0 16px;
+
+.footer{
+  text-align:center;
+  padding:20px;
+  background:#111827;
+  font-size:13px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="header">Aabuwa Wingo Game</div>
-
-<div class="balance">Balance ₹<span id="balance">1000</span></div>
-
-<div class="timer">⏳ <span id="time">30</span>s</div>
-
-<!-- NUMBER BUTTONS -->
-<div class="numbers">
-  <button onclick="betNumber(0)">0</button>
-  <button onclick="betNumber(1)">1</button>
-  <button onclick="betNumber(2)">2</button>
-  <button onclick="betNumber(3)">3</button>
-  <button onclick="betNumber(4)">4</button>
-  <button onclick="betNumber(5)">5</button>
-  <button onclick="betNumber(6)">6</button>
-  <button onclick="betNumber(7)">7</button>
-  <button onclick="betNumber(8)">8</button>
-  <button onclick="betNumber(9)">9</button>
+<div class="header">
+  <div class="logo">ROYAL BET</div>
+  <div class="balance">Balance ₹10,000</div>
 </div>
 
-<div class="bet-input">
-  Bet ₹ <input type="number" id="betAmount" value="100" min="10">
+<div class="section-title">🔥 Popular Games</div>
+<div class="games">
+  <div class="card"><h4>🎨 Wingo</h4></div>
+  <div class="card"><h4>✈️ Aviator</h4></div>
+  <div class="card"><h4>💥 Crash</h4></div>
+  <div class="card"><h4>🎡 Roulette</h4></div>
+  <div class="card"><h4>🃏 Blackjack</h4></div>
+  <div class="card"><h4>🎲 Baccarat</h4></div>
 </div>
 
-<!-- COLOR + BIG/SMALL -->
-<div class="actions">
-  <button class="green" onclick="betColor('Green')">Green (2X)</button>
-  <button class="violet" onclick="betColor('Violet')">Violet (4X)</button>
-  <button class="red" onclick="betColor('Red')">Red (2X)</button>
-  <button class="big" onclick="betBigSmall('Big')">Big (2X)</button>
-  <button class="small" onclick="betBigSmall('Small')">Small (2X)</button>
+<div class="section-title">🎰 Slots</div>
+<div class="games">
+  <div class="card"><h4>Sweet Bonanza</h4></div>
+  <div class="card"><h4>Gates of Olympus</h4></div>
+  <div class="card"><h4>Fruit Party</h4></div>
+  <div class="card"><h4>Big Bass Bonanza</h4></div>
 </div>
 
-<div class="result-box">Result: <span id="result">Waiting...</span></div>
+<div class="section-title">🎲 Indian Games</div>
+<div class="games">
+  <div class="card"><h4>Teen Patti</h4></div>
+  <div class="card"><h4>Andar Bahar</h4></div>
+  <div class="card"><h4>Rummy</h4></div>
+  <div class="card"><h4>Dragon Tiger</h4></div>
+</div>
 
-<div class="history"><h3>History</h3><div id="historyList"></div></div>
+<div class="section-title">⚽ Sports Betting</div>
+<div class="games">
+  <div class="card"><h4>Cricket</h4></div>
+  <div class="card"><h4>Football</h4></div>
+  <div class="card"><h4>Tennis</h4></div>
+  <div class="card"><h4>Basketball</h4></div>
+</div>
 
-<script>
-let balance = 1000;
-let timeLeft = 30;
-let betType = "";
-let betValue = null;
-let historyData = [];
+<div class="section-title">🎣 Skill Games</div>
+<div class="games">
+  <div class="card"><h4>Fishing Game</h4></div>
+  <div class="card"><h4>Virtual Sports</h4></div>
+  <div class="card"><h4>Lottery</h4></div>
+</div>
 
-function betNumber(n){
-  betType = "number";
-  betValue = n;
-  alert("Number chosen: " + n + " (9X win)");
-}
-
-function betColor(c){
-  betType = "color";
-  betValue = c;
-  alert("Color chosen: " + c);
-}
-
-function betBigSmall(bs){
-  betType = "bigsmall";
-  betValue = bs;
-  alert("Chosen: " + bs);
-}
-
-function getResultColor(num){
-  if(num == 0 || num == 5) return "Violet";
-  if(num % 2 == 0) return "Red";
-  return "Green";
-}
-
-function getBigSmall(num){
-  return num >= 5 ? "Big" : "Small";
-}
-
-setInterval(function(){
-  timeLeft--;
-  document.getElementById("time").innerText = timeLeft;
-
-  if(timeLeft <= 0){
-
-    let rnd = Math.floor(Math.random()*10);
-    let color = getResultColor(rnd);
-    let bs = getBigSmall(rnd);
-    let amt = parseInt(document.getElementById("betAmount").value);
-
-    let win = 0;
-    if(betType == "number" && betValue === rnd) win = amt * 9;
-    else if(betType == "color" && betValue == color){
-      win = amt * (betValue == "Violet" ? 4 : 2);
-    }
-    else if(betType == "bigsmall" && betValue == bs) win = amt * 2;
-    else win = -amt;
-
-    balance += win;
-    document.getElementById("balance").innerText = balance;
-
-    document.getElementById("result").innerText =
-      rnd + " (" + color + ", " + bs + ") → " + (win>0 ? "+"+win : win);
-
-    historyData.unshift(
-      rnd + " | " + color + " | " + bs + " | " + (win>0?"+"+win:"+win)
-    );
-    if(historyData.length > 10) historyData.pop();
-
-    document.getElementById("historyList").innerHTML =
-      historyData.join("<br>");
-
-    betType = ""; betValue = null;
-    timeLeft = 30;
-  }
-
-},1000);
-</script>
+<div class="footer">
+© 2026 Royal Bet Gaming Platform • All Rights Reserved
+</div>
 
 </body>
 </html>
